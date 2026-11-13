@@ -18,10 +18,11 @@ orderForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
   const data = new FormData(orderForm);
-  const subject = `Order enquiry: ${data.get('product')}`;
-  const body = [
+  const message = [
+    "Hello Meea's Bakery, I'd like to place an order:",
+    '',
     `Name: ${data.get('name')}`,
-    `Phone: ${data.get('phone')}`,
+    `Customer phone: ${data.get('phone')}`,
     `Email: ${data.get('email') || 'Not provided'}`,
     `Product: ${data.get('product')}`,
     `Quantity: ${data.get('quantity')}`,
@@ -31,5 +32,12 @@ orderForm.addEventListener('submit', (event) => {
     data.get('message') || 'None',
   ].join('\n');
 
-  window.location.href = `mailto:hello@meeasbakery.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.open(`https://wa.me/2348117410004?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
+});
+
+document.querySelectorAll('[data-order-product]').forEach((button) => {
+  button.addEventListener('click', () => {
+    orderForm.elements.product.value = button.dataset.orderProduct;
+    document.querySelector('#order').scrollIntoView({ behavior: 'smooth' });
+  });
 });
