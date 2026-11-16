@@ -1,6 +1,62 @@
 const menuButton = document.querySelector('#menuButton');
 const mobileMenu = document.querySelector('#mobileMenu');
 const orderForm = document.querySelector('#orderForm');
+const desktopMenuButton = document.querySelector('#desktopMenuButton');
+const desktopMenu = desktopMenuButton?.closest('.menu-dropdown');
+const menuTreeBranches = desktopMenu?.querySelectorAll('.menu-tree__branch') ?? [];
+
+const activateMenuBranch = (branch) => {
+  menuTreeBranches.forEach((item) => item.classList.toggle('is-active', item === branch));
+};
+
+menuTreeBranches.forEach((branch) => {
+  branch.addEventListener('mouseenter', () => activateMenuBranch(branch));
+  branch.addEventListener('focusin', () => activateMenuBranch(branch));
+});
+
+desktopMenuButton?.addEventListener('click', () => {
+  const isOpen = desktopMenu.classList.toggle('is-open');
+  desktopMenuButton.setAttribute('aria-expanded', String(isOpen));
+});
+
+desktopMenu?.addEventListener('mouseenter', () => {
+  desktopMenuButton.setAttribute('aria-expanded', 'true');
+});
+
+desktopMenu?.addEventListener('mouseleave', () => {
+  desktopMenu.classList.remove('is-open');
+  desktopMenuButton.setAttribute('aria-expanded', 'false');
+  if (menuTreeBranches[0]) activateMenuBranch(menuTreeBranches[0]);
+});
+
+desktopMenu?.addEventListener('focusout', (event) => {
+  if (!desktopMenu.contains(event.relatedTarget)) {
+    desktopMenu.classList.remove('is-open');
+    desktopMenuButton.setAttribute('aria-expanded', 'false');
+  }
+});
+
+desktopMenu?.querySelectorAll('a').forEach((link) => {
+  link.addEventListener('click', () => {
+    desktopMenu.classList.remove('is-open');
+    desktopMenuButton.setAttribute('aria-expanded', 'false');
+  });
+});
+
+document.addEventListener('click', (event) => {
+  if (desktopMenu && !desktopMenu.contains(event.target)) {
+    desktopMenu.classList.remove('is-open');
+    desktopMenuButton.setAttribute('aria-expanded', 'false');
+  }
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && desktopMenu) {
+    desktopMenu.classList.remove('is-open');
+    desktopMenuButton.setAttribute('aria-expanded', 'false');
+    desktopMenuButton.focus();
+  }
+});
 
 menuButton.addEventListener('click', () => {
   const isOpen = !mobileMenu.classList.toggle('hidden');
